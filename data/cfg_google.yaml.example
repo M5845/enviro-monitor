@@ -1,0 +1,7 @@
+client_id: my_client_id
+client_secret: my_secret
+scope: http://spreadsheets.google.com/feeds/
+spreadsheet: my_spreadsheet
+worksheet: my_worksheet
+worksheet-use-date: 1
+session: my_path_to_google_session

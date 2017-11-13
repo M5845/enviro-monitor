@@ -1,0 +1,98 @@
+---
+title: "Enviro-Monitor"
+author: "Martin Bens"
+output: html_document
+---
+
+```{r setup, include = F}
+require(plyr)
+require(tidyverse)
+require(yaml)
+
+knitr::opts_chunk$set(echo = F)
+
+dir.data = "../data"
+dir.output = "../output"
+
+cfg = yaml.load_file(file.path(dir.data, "cfg_sensors.yaml"))
+```
+
+```{r preprocessing, echo = F, include = F}
+
+# labels from config
+mylabels = ldply(cfg, function(x) c(x$id, x$description))
+colnames(mylabels) = c("id", "description")
+
+# input
+myfiles = list.files(dir.output, "\\d\\d-\\d\\d_sensors.csv", full.names = T)
+content = ldply(myfiles, read_tsv, col_names = F)
+colnames(content) = c("date", "type", "id", "description", "value")
+
+# preprocessing
+content$posixDate = as.POSIXct(content$date, format= "%Y-%m-%d %H:%M:%S")
+content$day = format(content$posixDate, "%d")
+content$month = format(content$posixDate, "%m")
+content$month.n = format(content$posixDate, "%B")
+content$year = format(content$posixDate, "%Y")
+content$description = mylabels$description[match(content$id, mylabels$id)]
+
+# temperatur
+con.temp = content %>%
+    filter(type == "temp", id != "piBoard", !is.na(value), !is.na(description)) %>%
+    group_by(day, month, year, description, month.n) %>%
+    summarize(
+        mean = mean(value),
+        sd = sd(value),
+        n = length(value),
+        date = paste(month[1], year[1], sep = "-")
+    )
+
+```
+
+```{r viz.ggviz, echo = F, eval = F}
+require(ggvis)
+
+mydates = factor(unique(con.temp$date), levels = con.temp$date)
+con.temp %>%
+    ggvis(~day, ~mean, fill = ~factor(id)) %>%
+    filter(date %in% eval(input_select(mydates))) %>%
+    layer_points() %>%
+    add_axis("x", title = "days") %>%
+    add_axis("y", title = "temperatur (C)")
+```
+
+```{r viz.ggplot.prep, include = F}
+require(ggplot2)
+attach(con.temp)
+con.temp$year.f = factor(year, levels = sort(unique(year)), order = T)
+con.temp$month.f = factor(month, levels = sort(unique(month)), order = T)
+con.temp$day.f = factor(day, levels = sort(unique(day)), order = T)
+con.temp$label = round(mean, 0)
+detach(con.temp)
+
+con.temp.split = dlply(con.temp, .(year, month))
+con.temp.split = con.temp.split[sort(names(con.temp.split), T)]
+```
+
+```{r viz.ggplot, fig.width = 8, height = 2}
+plotMe <- function(xdf) {
+    limits = aes(ymax = mean + sd, ymin = mean - sd)
+
+    print(
+        ggplot(xdf, aes(x=day, y=mean, color=description, group = description)) +
+            geom_point() +
+            geom_errorbar(limits, width = 0.1) +
+            geom_line() +
+            theme_bw() +
+            ggtitle(paste0(xdf$month.n[1], " ", xdf$year[1])) +
+            geom_text(nudge_x = 0.3, aes(label = label)) +
+            xlab("day of month") + ylab("temperature (C)") #+
+            #theme(legend.position = "bottom", legend.key.width = unit(3, "cm"))
+    )
+
+}
+l_ply(con.temp.split, plotMe)
+```
+
+
+

@@ -1,0 +1,36 @@
+-
+  id: 28-0000067887d5
+  cable: gelb
+  description: Aquarium-Axolotl
+  type: temp
+  sensor: dallas
+-
+  id: 28-000006767bdb
+  cable: rot
+  description: Aquarium-Garnelen
+  type: temp
+  sensor: dallas
+-
+  id: 28-0000068a414a
+  cable: blau
+  description: Aussenwelt
+  type: temp
+  sensor: dallas
+-
+  id: AM2302-140903756
+  cable: steckbrett
+  description: box
+  type: humidity
+  sensor: AM2302
+#-
+#  id: BMP180
+#  cable: steckbrett
+#  description: box
+#  type: pressure
+#  sensor: BMP180
+-
+  id: piBoard
+  cable: piBoard
+  description: OnBoardSensor
+  type: temp
+  sensor: onBoard
