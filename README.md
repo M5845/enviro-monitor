@@ -9,8 +9,20 @@ Toy project.
     - [x] shiny
     - [ ] shiny tabs for temperatur course during month and day
 
+## Run Shiny
 
-## cfg_google.yaml
+    cd src/
+    Rscript 03-viz.R
+    Rscript 04-shiny-ui.R
+
+
+
+## Recoding Temperature
+
+    bash src/01-read-sensors.sh # reads sensors values based
+    bash src/02-google.sh # upload to google sheet
+
+### cfg_google.yaml
 
 Requires access to Google APIs. Enviro-Monitor uses
 [OAuth2](https://developers.google.com/identity/protocols/OAuth2) to fetch and
@@ -21,7 +33,7 @@ store a token for ClientID and Secret. ClientID and secret must be specified in
 
 Token is saved to path specified in `session`.
 
-### Options
+#### Options
 
     spreadsheet
 
@@ -39,7 +51,7 @@ If 1, creates new worksheet for every month (example: 17-10 for Oct 2017).
 
 Token file.
 
-## cfg_sensors.yaml
+### cfg_sensors.yaml
 
     id
 
@@ -62,7 +74,7 @@ Type of sensor (temp|humidity|pressure).
 
 Name of sensor (dallas|BMP180|AM2302|onBoard)
 
-## Requires
+### Requires
 
 Some scripts:
 
