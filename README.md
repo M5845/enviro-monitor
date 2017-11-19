@@ -3,10 +3,11 @@
 Toy project.
 
 - recording temperature using Raspberry Pi
-- upload recordings to Google Sheets
+- upload recordings to Google Sheet
 - visualisation with R and
     - [x] ggplot
-    - [ ] shiny
+    - [x] shiny
+    - [ ] shiny tabs for temperatur course during month and day
 
 
 ## cfg_google.yaml
@@ -69,5 +70,4 @@ Some scripts:
 - [BMP180](https://learn.adafruit.com/using-the-bmp085-with-raspberry-pi/using-the-adafruit-bmp-python-library)
 
 Paths to scripts are currently hardcoded in lib/Sensor.pm
-
 
